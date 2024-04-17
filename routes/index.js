@@ -24,6 +24,9 @@ router.get('/trips/:departure/:arrival/:date', async (req, res) => {
     return res.send('Departure, arrival, and date must be provided.');
   }
 
+  const departureLower = departure.toLowerCase();
+  const arrivalLower = arrival.toLowerCase();
+
   const searchDate = new Date(date);
   searchDate.setUTCHours(0, 0, 0, 0);
   console.log(searchDate)
@@ -33,8 +36,8 @@ router.get('/trips/:departure/:arrival/:date', async (req, res) => {
   console.log(endDate)
  
     const availableTrips = await Trip.find({
-      departure: departure,
-      arrival: arrival,
+      departure: departureLower,
+      arrival: arrivalLower,
       date: {
         $gte: searchDate,
         $lte: endDate
@@ -137,9 +140,6 @@ router.delete('/cart/:_id', async (req, res) => {
     res.json({ result: false, error: 'Trip not found' });
   }
 });*/
-const express = require('express');
-const router = express.Router();
-const Cart = require('../models/Cart'); // Make sure to require the Cart model correctly based on your project structure
 
 // DELETE route to remove a trip from the cart by the trip's ID
 router.delete('/trip/:tripId', async (req, res) => {
