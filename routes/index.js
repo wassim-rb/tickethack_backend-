@@ -24,7 +24,7 @@ router.get('/trips/:departure/:arrival/:date', async (req, res) => {
     return res.send('Departure, arrival, and date must be provided.');
   }
 
-  const departureLower = departure.toLowerCase();
+  //const departureLower = departure.toLowerCase();
   const arrivalLower = arrival.toLowerCase();
 
   const searchDate = new Date(date);
@@ -36,8 +36,8 @@ router.get('/trips/:departure/:arrival/:date', async (req, res) => {
   console.log(endDate)
  
     const availableTrips = await Trip.find({
-      departure: departureLower,
-      arrival: arrivalLower,
+      departure: departure,
+      arrival: arrival,
       date: {
         $gte: searchDate,
         $lte: endDate
@@ -141,31 +141,15 @@ router.delete('/cart/:_id', async (req, res) => {
   }
 });*/
 
-// DELETE route to remove a trip from the cart by the trip's ID
-router.delete('/trip/:tripId', async (req, res) => {
-  try {
-    const tripIdToRemove = req.params.tripId;
-    // Since there's no user context, we'll assume there's a single cart in your DB
-    const cart = await Cart.findOne(); // This would need to be adjusted if there are multiple carts
 
-    if (cart) {
-      const tripIndex = cart.trips.findIndex((tripId) => tripId.toString() === tripIdToRemove);
-      if (tripIndex > -1) {
-        cart.trips.splice(tripIndex, 1); // Remove the trip from the array
-        // Optionally, recalculate the total price here if necessary
-        await cart.save(); // Save the updated cart
-        res.json({ result: true, cart });
-      } else {
-        res.status(404).json({ result: false, error: 'Trip not found in the cart' });
-      }
-    } else {
-      res.status(404).json({ result: false, error: 'Cart not found' });
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ result: false, error: 'An internal error occurred' });
-  }
+/* DELETE empty cart after purchase */
+router.delete('/emptycart', (req, res) => {
+   Cart.deleteMany();
+
+  res.json({ message: 'Cart has been emptied successfully.' });
 });
+
+
 
 module.exports = router;
 
